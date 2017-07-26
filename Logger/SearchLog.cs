@@ -98,7 +98,14 @@ namespace Logger
                     Query.GTE("Timestamp", startTime), Query.LTE("Timestamp", endTime));
             }
 
-            return Find(query, "_id", new ObjectId(lastKeyValue), pageSize, sortType);
+            if (string.IsNullOrEmpty(lastKeyValue))
+            {
+                return Find(query, "_id", null, pageSize, sortType);
+            }
+            else
+            {
+                return Find(query, "_id", new ObjectId(lastKeyValue), pageSize, sortType);
+            }
         }
 
         /// <summary>
