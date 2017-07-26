@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Logger</name>
+    </assembly>
+    <members>
+        <member name="T:Logger.ILogger">
+            <summary>
+            插件接口，写日志的实现可以多种，但不对外公开
+            </summary>
+        </member>
+        <member name="T:Logger.IWriteLog">
+            <summary>
+            写日志可供第三方调用
+            </summary>
+        </member>
+        <member name="T:Logger.ISearchLog">
+            <summary>
+            查询日志只限MongoDb,可供第三方程序调用
+            </summary>
+        </member>
+        <member name="M:Logger.ISearchLog.QueryLogInfos(System.String,System.String,System.Int32,System.String,System.String)">
+            <summary>
+            按条件查询不分页
+            </summary>
+            <param name="appName">程序名称</param>
+            <param name="operate">操作名称</param>
+            <param name="type">日志类型</param>
+            <param name="startTime">开始时间</param>
+            <param name="endTime">结束时间</param>
+            <returns></returns>
+        </member>
+        <member name="M:Logger.ISearchLog.QueryPageLogs(System.Int32,System.String,System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            只安日志类型及时间分页查询
+            </summary>
+            <param name="type">日志类型(0,1,2),-1代表不区分</param>
+            <param name="startTime">开始时间</param>
+            <param name="endTime">结束时间</param>
+            <param name="lastKeyValue">上一页最后一条ID</param>
+            <param name="pageSize">每页条数</param>
+            <param name="sortType">排序1升序，-1降序</param>
+            <returns></returns>
+        </member>
+        <member name="M:Logger.ISearchLog.QueryPageLogs(System.String,System.String,System.Int32,System.String,System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            分页查询总
+            </summary>
+            <param name="appName">程序名称</param>
+            <param name="operate">操作名称</param>
+            <param name="type">日志类型(0,1,2),-1代表不区分</param>
+            <param name="startTime">开始时间</param>
+            <param name="endTime">结束时间</param>
+            <param name="lastKeyValue">上一页最后一条ID</param>
+            <param name="pageSize">每页条数</param>
+            <param name="sortType">排序1升序，-1降序</param>
+            <returns></returns>
+        </member>
+        <member name="M:Logger.ISearchLog.GetAllLogInfos">
+            <summary>
+            查询所有日志
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Logger.LogInfo">
+            <summary>
+            日志实体
+            </summary>
+        </member>
+        <member name="T:Logger.LogType">
+            <summary>
+            日志类型
+            </summary>
+        </member>
+        <member name="M:Logger.SearchLog.QueryLogInfos(System.String,System.String,System.Int32,System.String,System.String)">
+            <summary>
+            条件查询，不分页
+            </summary>
+            <param name="appName"></param>
+            <param name="operate"></param>
+            <param name="type"></param>
+            <param name="startTime"></param>
+            <param name="endTime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Logger.SearchLog.QueryPageLogs(System.Int32,System.String,System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            只安日志类型及时间分页查询
+            </summary>
+            <param name="type"></param>
+            <param name="startTime"></param>
+            <param name="endTime"></param>
+            <param name="lastKeyValue"></param>
+            <param name="pageSize"></param>
+            <param name="sortType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Logger.SearchLog.QueryPageLogs(System.String,System.String,System.Int32,System.String,System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            分页查询
+            </summary>
+            <param name="appName"></param>
+            <param name="operate"></param>
+            <param name="type"></param>
+            <param name="startTime"></param>
+            <param name="endTime"></param>
+            <param name="lastKeyValue"></param>
+            <param name="pageSize"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Logger.SearchLog.GetAllLogInfos">
+            <summary>
+            获取所有日志
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Logger.SearchLog.Find(MongoDB.Driver.IMongoQuery,System.String,System.Object,System.Int32,System.Int32)">
+            <summary>  
+            分页查询 指定索引最后项-PageSize模式   
+            </summary>  
+            <typeparam name="LogInfo">所需查询的数据的实体类型</typeparam>  
+            <param name="query">查询的条件 没有可以为null</param>  
+            <param name="indexName">索引名称</param>  
+            <param name="lastKeyValue">最后索引的值</param>  
+            <param name="pageSize">分页的尺寸</param>  
+            <param name="sortType">排序类型 1升序 -1降序 仅仅针对该索引</param>  
+            <returns>返回一个List列表数据</returns>  
+        </member>
+        <member name="M:Logger.WriteLog.Run(Logger.LogInfo)">
+            <summary>
+            日志入口函数
+            </summary>
+            <param name="logInfo"></param>
+        </member>
+        <member name="M:Logger.WriteLog.ReadXml">
+            <summary>
+            读取配置文件
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
