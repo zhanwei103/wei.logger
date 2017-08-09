@@ -120,6 +120,24 @@ namespace Logger
             return collection.FindAll().ToList<LogInfo>();
         }
 
+        public List<LogInfo> QueryPageLogs(string appName, string operate, int type, string startTime, string endTime, int indexPage, int pageSize, int sortType, out int total)
+        {
+            total = 0;
+            IMongoQuery query = null;
+            if (type != -1)
+            {
+                query = Query.And(Query.Matches("AppName", appName), Query.Matches("Operate", operate),
+                    Query.EQ("Type", type), Query.GTE("Timestamp", startTime), Query.LTE("Timestamp", endTime));
+            }
+            else
+            {
+                query = Query.And(Query.Matches("AppName", appName), Query.Matches("Operate", operate),
+                    Query.GTE("Timestamp", startTime), Query.LTE("Timestamp", endTime));
+            }
+            GetTotal(query, out total);
+            return Find(query,"_id",indexPage,pageSize,sortType);
+        }
+
 
         /// <summary>  
         /// 分页查询 指定索引最后项-PageSize模式   
@@ -168,6 +186,48 @@ namespace Logger
                 return null;
             }
         }
+        
+        private void GetTotal(IMongoQuery query, out int total)
+        {
+            total = 0;
+            var db = new DbContext();
+            var collection = db.Collection<LogInfo>();
+            total=Convert.ToInt32(collection.Find(query).Count());
+        }
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="indexName"></param>
+        /// <param name="indexPage"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="sortType"></param>
+        /// <returns></returns>
+        private List<LogInfo> Find(IMongoQuery query, string indexName, int indexPage, int pageSize, int sortType)
+        {
+            try
+            {
+                var db = new DbContext();
+                var collection = db.Collection<LogInfo>();
 
+                MongoCursor<LogInfo> mongoCursor = null;
+
+                //判断升降序后进行查询  
+                if (sortType > 0)
+                {
+                    //先按条件查询 再排序 再取数  
+                    mongoCursor = collection.Find(query).SetSkip(indexPage*pageSize).SetLimit(pageSize).SetSortOrder(new SortByDocument(indexName, 1));
+                }
+                else
+                {
+                    mongoCursor = collection.Find(query).SetSkip(indexPage * pageSize).SetLimit(pageSize).SetSortOrder(new SortByDocument(indexName, -1));
+                }
+                return mongoCursor.ToList<LogInfo>();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

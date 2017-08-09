@@ -84,6 +84,21 @@ namespace Logger
         List<LogInfo> QueryPageLogs(string appName, string operate, int type, string startTime, string endTime, string lastKeyValue, int pageSize, int sortType);
 
         /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <param name="appName"></param>
+        /// <param name="operate"></param>
+        /// <param name="type"></param>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="indexPage"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="sortType"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
+        List<LogInfo> QueryPageLogs(string appName, string operate, int type, string startTime, string endTime, int indexPage, int pageSize, int sortType, out int total);
+
+        /// <summary>
         /// 查询所有日志
         /// </summary>
         /// <returns></returns>

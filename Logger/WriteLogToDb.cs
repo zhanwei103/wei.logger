@@ -35,7 +35,6 @@ namespace Logger
     [ExportMetadata("Depict", "2")]
     class WriteLogToDb : ILogger
     {
-
         void ILogger.Write(LogInfo logInfo)
         {
 
@@ -49,18 +48,15 @@ namespace Logger
 
                 var results = collection.Insert(logInfo);
                 Console.WriteLine(results.Ok);
+
+#if DEBUG
+                Console.WriteLine("WriteLogToDb,结果:{0}", results.Ok);
+#endif
             }
             catch(Exception ex)
             {
                 throw ex;
             }
-            
-
-#if DEBUG
-            Console.WriteLine("WriteLogToDb,结果:{0}", results.Ok);
-#endif
         }
-
-
     }
 }
