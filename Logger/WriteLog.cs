@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,7 +37,15 @@ namespace Logger
     {
         [ImportMany]
         IEnumerable<Lazy<ILogger, LogInterfaceDepict>> DoList;
-
+        
+        private LogInfo _logInfo = new LogInfo();
+        public WriteLog()
+        {
+            StackTrace trace = new StackTrace();
+            StackFrame frame = trace.GetFrame(1);//1代表上级，2代表上上级，以此类推  
+            _logInfo.Operate  = frame.GetMethod().Name;
+            _logInfo.AppName = frame.GetMethod().ReflectedType.FullName;  
+        }
         /// <summary>
         /// 日志入口函数
         /// </summary>
@@ -48,6 +57,22 @@ namespace Logger
             foreach (var _do in DoList.Where(item => Array.IndexOf(logList,item.Metadata.Depict)>-1))
             {
                 _do.Value.Write(logInfo);
+            }
+        }
+        /// <summary>
+        /// 自动获取上一级的类名和方法名
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="type"></param>
+        public void Run(string message,LogType type)
+        {
+            _logInfo.Type = type;
+            _logInfo.Content = message;
+            _logInfo.Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); ;
+            string[] logList = ReadXml();
+            foreach (var _do in DoList.Where(item => Array.IndexOf(logList, item.Metadata.Depict) > -1))
+            {
+                _do.Value.Write(_logInfo);
             }
         }
 
