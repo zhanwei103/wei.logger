@@ -25,6 +25,8 @@ using System.ComponentModel.Composition;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,14 +39,28 @@ namespace Logger
     {
         [ImportMany]
         IEnumerable<Lazy<ILogger, LogInterfaceDepict>> DoList;
-        
+
         private LogInfo _logInfo = new LogInfo();
         public WriteLog()
         {
             StackTrace trace = new StackTrace();
             StackFrame frame = trace.GetFrame(1);//1代表上级，2代表上上级，以此类推  
-            _logInfo.Operate  = frame.GetMethod().Name;
-            _logInfo.AppName = frame.GetMethod().ReflectedType.FullName;  
+            _logInfo.Operate = frame.GetMethod().Name;
+            _logInfo.AppName = frame.GetMethod().ReflectedType.FullName;
+            _logInfo.Directory = Environment.CurrentDirectory;
+
+            //获取本机IP地址
+            _logInfo.ServerName = Dns.GetHostName();   //获取本机名
+            IPAddress[] addressList = Dns.GetHostAddresses(_logInfo.ServerName);//会返回所有地址，包括IPv4和IPv6   
+            foreach (IPAddress ip in addressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    _logInfo.ServerIp = ip.ToString();
+                    break;
+                }
+            }
+
         }
         /// <summary>
         /// 日志入口函数
@@ -53,8 +69,8 @@ namespace Logger
         public void Run(LogInfo logInfo)
         {
             logInfo.Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); ;
-            string[] logList=ReadXml();
-            foreach (var _do in DoList.Where(item => Array.IndexOf(logList,item.Metadata.Depict)>-1))
+            string[] logList = ReadXml();
+            foreach (var _do in DoList.Where(item => Array.IndexOf(logList, item.Metadata.Depict) > -1))
             {
                 _do.Value.Write(logInfo);
             }
@@ -64,7 +80,7 @@ namespace Logger
         /// </summary>
         /// <param name="message"></param>
         /// <param name="type"></param>
-        public void Run(string message,LogType type)
+        public void Run(string message, LogType type)
         {
             _logInfo.Type = type;
             _logInfo.Content = message;
@@ -86,10 +102,11 @@ namespace Logger
             string config = ConfigurationManager.AppSettings["WriteLogMethod"];
             if (string.IsNullOrEmpty(config))
             {
-                string[] logList = new string[] { "1"};
+                string[] logList = new string[] { "1" };
                 return logList;
             }
-            else {
+            else
+            {
                 string[] logList = config.Split(',');
                 return logList;
             }

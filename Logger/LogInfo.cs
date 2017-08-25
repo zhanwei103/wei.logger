@@ -46,6 +46,18 @@ namespace Logger
         /// </summary>
         public string Operate { get; set; }
         /// <summary>
+        /// 路径
+        /// </summary>
+        public string Directory { get; set; }
+        /// <summary>
+        /// 服务器IP地址
+        /// </summary>
+        public string ServerIp { get; set; }
+        /// <summary>
+        /// 服务器名称
+        /// </summary>
+        public string ServerName { get; set; }
+        /// <summary>
         /// 内容
         /// </summary>
         public string Content { get; set; }
@@ -53,6 +65,9 @@ namespace Logger
         /// 日志类型
         /// </summary>
         public LogType Type { get; set; }
+
+        
+
         /// <summary>
         /// 时间戳，自动生成
         /// </summary>
@@ -64,7 +79,8 @@ namespace Logger
         /// <returns></returns>
         public override string ToString()
         {
-            string logInfo = string.Format("/**************开始****************/ \r\nId:{5}\r\nAppName:{0} \r\nOperate:{1}\r\nContent:{2}\r\nLogType:{3}\r\nTimestamp:{4}\r\n\r\n",
+            string logInfo = string.Format(@"/**************开始****************/ \r\nId:{5}\r\nAppName:{0} \r\n
+                                            Operate:{1}\r\nContent:{2}\r\nLogType:{3}\r\nTimestamp:{4}\r\n\r\n",
                 AppName, Operate, Content, Type, Timestamp,_id);
             return logInfo;
         }
