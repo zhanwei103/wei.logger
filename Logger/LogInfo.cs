@@ -79,8 +79,7 @@ namespace Logger
         /// <returns></returns>
         public override string ToString()
         {
-            string logInfo = string.Format(@"/**************开始****************/ \r\nId:{5}\r\nAppName:{0} \r\n
-                                            Operate:{1}\r\nContent:{2}\r\nLogType:{3}\r\nTimestamp:{4}\r\n\r\n",
+            string logInfo = string.Format("/**************开始****************/ \r\nId:{5}\r\nAppName:{0} \r\nOperate:{1}\r\nContent:{2}\r\nLogType:{3}\r\nTimestamp:{4}\r\n\r\n",
                 AppName, Operate, Content, Type, Timestamp,_id);
             return logInfo;
         }

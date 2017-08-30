@@ -41,12 +41,24 @@ namespace Logger
         IEnumerable<Lazy<ILogger, LogInterfaceDepict>> DoList;
 
         private LogInfo _logInfo = new LogInfo();
+
+        /// <summary>
+        /// 空构造函数，不做任何处理
+        /// </summary>
         public WriteLog()
+        {
+
+        }
+        /// <summary>
+        /// 自动获取方法名及路径，服务器名，IP等
+        /// </summary>
+        /// <param name="appName"></param>
+        public WriteLog(string appName)
         {
             StackTrace trace = new StackTrace();
             StackFrame frame = trace.GetFrame(1);//1代表上级，2代表上上级，以此类推  
-            _logInfo.Operate = frame.GetMethod().Name;
-            _logInfo.AppName = frame.GetMethod().ReflectedType.FullName;
+            _logInfo.Operate = string.Format("{0}.{1}",frame.GetMethod().ReflectedType.FullName,frame.GetMethod().Name);
+            _logInfo.AppName = appName;//APP名称传值
             _logInfo.Directory = Environment.CurrentDirectory;
 
             //获取本机IP地址
@@ -60,8 +72,8 @@ namespace Logger
                     break;
                 }
             }
-
         }
+
         /// <summary>
         /// 日志入口函数
         /// </summary>
@@ -82,6 +94,10 @@ namespace Logger
         /// <param name="type"></param>
         public void Run(string message, LogType type)
         {
+            if (string.IsNullOrEmpty(_logInfo.AppName))
+            {
+                return;
+            }
             _logInfo.Type = type;
             _logInfo.Content = message;
             _logInfo.Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); ;
